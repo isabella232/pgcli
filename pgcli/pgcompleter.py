@@ -68,10 +68,16 @@ class PGCompleter(Completer):
         self.pgspecial = pgspecial
         self.prioritizer = PrevalenceCounter()
         settings = settings or {}
-        self.signature_arg_style = settings.get('signature_arg_style')
-        self.call_arg_style = settings.get('call_arg_style')
-        self.call_arg_display_style = settings.get('call_arg_display_style')
-        self.call_arg_oneliner_max = settings.get('call_arg_oneliner_max')
+        self.signature_arg_style = settings.get(
+            'signature_arg_style', '{arg_name} {arg_type}'
+        )
+        self.call_arg_style = settings.get(
+            'call_arg_style', '{arg_name: <{max_arg_len}} := {arg_default}'
+        )
+        self.call_arg_display_style = settings.get(
+            'call_arg_display_style', '{arg_name}'
+        )
+        self.call_arg_oneliner_max = settings.get('call_arg_oneliner_max', 2)
         self.search_path_filter = settings.get('search_path_filter')
         self.generate_aliases = settings.get('generate_aliases')
         self.casing_file = settings.get('casing_file')
