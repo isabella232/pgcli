@@ -115,10 +115,6 @@ def refresh_views(completer, executor):
     completer.extend_relations(executor.views(), kind='views')
     completer.extend_columns(executor.view_columns(), kind='views')
 
-@refresher('functions')
-def refresh_functions(completer, executor):
-    completer.extend_functions(executor.functions())
-
 @refresher('types')
 def refresh_types(completer, executor):
     completer.extend_datatypes(executor.datatypes())
@@ -140,3 +136,7 @@ def refresh_casing(completer, executor):
     if os.path.isfile(casing_file):
         with open(casing_file, 'r') as f:
             completer.extend_casing([line.strip() for line in f])
+
+@refresher('functions')
+def refresh_functions(completer, executor):
+    completer.extend_functions(executor.functions())
