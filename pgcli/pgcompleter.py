@@ -662,7 +662,7 @@ class PGCompleter(Completer):
             self._format_arg(template, arg, arg_num + 1, max_arg_len)
             for arg_num, arg in enumerate(args)
         )
-        return '(' + ','.join(a for a in args if a) + ')'
+        return '(' + ','.join(a for a in args if a).lstrip(' ') + ')'
 
     def _format_arg(self, template, arg, arg_num, max_arg_len):
         if not template:
