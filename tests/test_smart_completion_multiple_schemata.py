@@ -606,14 +606,20 @@ def test_function_alias_search_without_aliases(completer_with_casing,
     text = 'SELECT blog.ees'
     result = completer_with_casing.get_completions(
         Document(text=text), complete_event)
-    assert result[0] == function('extract_entry_symbols()', -3)
+    first = result[0]
+    assert first.start_position == -3
+    assert first.text == 'extract_entry_symbols( _entryid := )'
+    assert first.display == 'extract_entry_symbols( _entryid)'
 
 def test_function_alias_search_with_aliases(completer_aliases_casing,
                                             complete_event):
     text = 'SELECT blog.ee'
     result = completer_aliases_casing.get_completions(
         Document(text=text), complete_event)
-    assert result[0] == function('enter_entry()', -2)
+    first = result[0]
+    assert first.start_position == -2
+    assert first.text == 'enter_entry( _title := , _text := )'
+    assert first.display == 'enter_entry( _title, _text)'
 
 def test_column_alias_search(completer_aliases_casing, complete_event):
     text = 'SELECT et FROM blog.Entries E'
