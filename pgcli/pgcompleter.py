@@ -652,17 +652,16 @@ class PGCompleter(Completer):
         args = func.args()
         if not template:
             return '()'
-        if usage == 'call' and len(args) > self.call_arg_oneliner_max:
-            template = '\n    ' + template
-            max_arg_len = max(len(a.name) for a in args)
-        else:
-            template = ' ' + template
-            max_arg_len = 0
+        multiline = usage == 'call' and len(args) > self.call_arg_oneliner_max
+        max_arg_len = max(len(a.name) for a in args) if multiline else 0
         args = (
             self._format_arg(template, arg, arg_num + 1, max_arg_len)
             for arg_num, arg in enumerate(args)
         )
-        return '(' + ','.join(a for a in args if a).lstrip(' ') + ')'
+        if multiline:
+            return '(' + ','.join('\n    ' + a for a in args if a) + '\n)'
+        else:
+            return '(' + ', '.join(a for a in args if a) + ')'
 
     def _format_arg(self, template, arg, arg_num, max_arg_len):
         if not template:
