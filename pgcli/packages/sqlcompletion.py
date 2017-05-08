@@ -432,9 +432,7 @@ def suggest_based_on_last_token(token, stmt):
 
     elif token_v == 'function':
         schema = stmt.get_identifier_schema()
-        if stmt.get_previous_token(token).value.lower() == 'drop':
-            return (Function(schema=schema, usage='signature'),)
-        elif stmt.get_previous_token(token).value.lower() == 'alter':
+        if stmt.get_previous_token(token).value.lower() in('drop', 'alter'):
             return (Function(schema=schema, usage='signature'),)
         else:
             return (Function(schema=schema),)

@@ -46,6 +46,9 @@ def Candidate(
         display or completion
     )
 
+# Used to strip trailing '::some_type' from default-value expressions
+arg_default_type_strip_regex = re.compile(r'::[\w\.]+(\[\])?$')
+
 normalize_ref = lambda ref: ref if ref[0] == '"' else '"' + ref.lower() +  '"'
 
 def generate_alias(tbl):
@@ -209,10 +212,13 @@ class PGCompleter(Completer):
 
             self.all_completions.add(func)
 
-        self._refresh_suffix_cache()
+        self._refresh_arg_list_cache()
 
-    def _refresh_suffix_cache(self):
-        self._suffix_cache = {
+    def _refresh_arg_list_cache(self):
+        # We keep a cache of {function_usage:{function_metadata: function_arg_list_string}}
+        # This is used when suggesting functions, to avoid the latency that would result
+        # if we'd recalculate the arg lists each time we suggest functions (in large DBs)
+        self._arg_list_cache = {
             usage: {
                 meta: self._arg_list(meta, usage)
                 for sch, funcs in self.dbmetadata['functions'].items()
@@ -669,7 +675,7 @@ class PGCompleter(Completer):
         if arg.has_default:
             arg_default = 'NULL' if arg.default is None else arg.default
             # Remove trailing ::(schema.)type
-            arg_default = re.sub(r'::[\w\.]+(\[\])?$', '', arg_default)
+            arg_default = arg_default_type_strip_regex.sub('', arg_default)
         else:
             arg_default = ''
         return template.format(
@@ -692,11 +698,11 @@ class PGCompleter(Completer):
         synonyms = (cased_tbl, generate_alias(cased_tbl))
         maybe_alias = (' ' + alias) if do_alias else ''
         maybe_schema = (self.case(tbl.schema) + '.') if tbl.schema else ''
-        suffix = self._suffix_cache[arg_mode][tbl.meta] if arg_mode else ''
+        suffix = self._arg_list_cache[arg_mode][tbl.meta] if arg_mode else ''
         if arg_mode == 'call':
-            display_suffix = self._suffix_cache['call_display'][tbl.meta]
+            display_suffix = self._arg_list_cache['call_display'][tbl.meta]
         elif arg_mode == 'signature':
-            display_suffix = self._suffix_cache['signature'][tbl.meta]
+            display_suffix = self._arg_list_cache['signature'][tbl.meta]
         else:
             display_suffix = ''
         item = maybe_schema + cased_tbl + suffix + maybe_alias

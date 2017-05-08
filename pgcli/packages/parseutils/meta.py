@@ -83,7 +83,7 @@ class FunctionMetadata(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def _sign(self):
+    def _signature(self):
         return (
             self.schema_name, self.func_name, self.arg_names, self.arg_types,
             self.arg_modes, self.return_type, self.is_aggregate,
@@ -91,13 +91,13 @@ class FunctionMetadata(object):
         )
 
     def __hash__(self):
-        return hash(self._sign())
+        return hash(self._signature())
 
     def __repr__(self):
         return (('%s(schema_name=%r, func_name=%r, arg_names=%r, '
             'arg_types=%r, arg_modes=%r, return_type=%r, is_aggregate=%r, '
             'is_window=%r, is_set_returning=%r, arg_defaults=%r)')
-                % (self.__class__.__name__,) + self._sign())
+                % (self.__class__.__name__,) + self._signature())
 
     def args(self):
         """Returns a list of input-parameter ColumnMetadata namedtuples"""
