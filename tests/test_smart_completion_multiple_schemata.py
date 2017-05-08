@@ -608,7 +608,7 @@ def test_function_alias_search_without_aliases(completer_with_casing,
         Document(text=text), complete_event)
     first = result[0]
     assert first.start_position == -3
-    assert first.text == 'extract_entry_symbols(_entryid := )'
+    assert first.text == 'extract_entry_symbols()'
     assert first.display == 'extract_entry_symbols(_entryid)'
 
 def test_function_alias_search_with_aliases(completer_aliases_casing,

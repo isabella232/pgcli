@@ -658,6 +658,8 @@ class PGCompleter(Completer):
         args = func.args()
         if not template:
             return '()'
+        elif usage == 'call' and len(args) < 2:
+            return '()'
         multiline = usage == 'call' and len(args) > self.call_arg_oneliner_max
         max_arg_len = max(len(a.name) for a in args) if multiline else 0
         args = (
